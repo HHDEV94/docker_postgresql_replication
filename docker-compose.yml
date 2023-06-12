@@ -1,0 +1,40 @@
+version: '2'
+
+services:
+  postgresql-master:
+    image: 'bitnami/postgresql:latest'
+    ports:
+      - '55432:5432'
+    environment:
+      - POSTGRESQL_REPLICATION_MODE=master
+      - POSTGRESQL_REPLICATION_USER=repl_user
+      - POSTGRESQL_REPLICATION_PASSWORD=repl_password
+      - POSTGRESQL_USERNAME=your_username <- Write the name you want
+      - POSTGRESQL_PASSWORD=your_password <- Write the password you want
+      - POSTGRESQL_DATABASE=northwind
+  postgresql-slave:
+    image: 'bitnami/postgresql:latest'
+    ports:
+      - '55433:5432'
+    depends_on:
+      - postgresql-master
+    environment:
+      - POSTGRESQL_REPLICATION_MODE=slave
+      - POSTGRESQL_REPLICATION_USER=repl_user
+      - POSTGRESQL_REPLICATION_PASSWORD=repl_password
+      - POSTGRESQL_MASTER_HOST=postgresql-master
+      - POSTGRESQL_PASSWORD=your_password <- This password is the same that master
+      - POSTGRESQL_MASTER_PORT_NUMBER=5432
+  postgresql-slave2:
+    image: 'bitnami/postgresql:latest'
+    ports:
+      - '55434:5432'
+    depends_on:
+      - postgresql-master
+    environment:
+      - POSTGRESQL_REPLICATION_MODE=slave
+      - POSTGRESQL_REPLICATION_USER=repl_user
+      - POSTGRESQL_REPLICATION_PASSWORD=repl_password
+      - POSTGRESQL_MASTER_HOST=postgresql-master
+      - POSTGRESQL_PASSWORD=your_password <- this password is the same that master
+      - POSTGRESQL_MASTER_PORT_NUMBER=5432
